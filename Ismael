@@ -1,5 +1,5 @@
 CREATE TABLE Location (
-	codeC varchar(5) UNIQUE REFERENCES Client(codeC),
+	codeC char(4) UNIQUE REFERENCES Client(codeC),
     immat char(6) UNIQUE REFERENCES Voiture(immat),
     annee year PRIMARY KEY,
     mois tinyint PRIMARY KEY,
