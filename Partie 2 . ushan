@@ -1,0 +1,15 @@
+create table Access (
+login varchar (50) ,
+password varchar(50),
+clientId char(4) UNIQUE REFERENCES Client(codeC), 
+access_level char(1) DEFAULT 'L'
+);
+
+INSERT INTO Access (login, password, clientId, access_level)
+SELECT 
+    CONCAT(Client.nom, '.', Client.prenom) AS login,  
+    MD5('defaultpassword') AS password,              
+    Client.codeC AS clientId,                       
+    'L' AS access_level                              
+FROM Client;
+
