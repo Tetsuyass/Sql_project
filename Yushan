@@ -11,7 +11,7 @@ couleur varchar(25),
 places tinyint,
 achatA year,
 compteur int,
-prixJ int,
+prixJ float,
 codeP char(3)
 );
 
