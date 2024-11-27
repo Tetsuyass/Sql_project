@@ -1,0 +1,48 @@
+create database AgenceLocation;
+use AgenceLocation;
+
+create table Voiture (
+immat char(6) primary key,
+modele varchar(25),
+marque varchar(25),
+categorie varchar(25),
+couleur varchar(25),
+places tinyint,
+achatA year,
+compteur int,
+prixJ float,
+codeP char(3)
+);
+
+create table Propritaire (
+codeP char(3),
+pseudo varchar(25),
+email varchar(50),
+ville varchar(25),
+annee year
+);
+
+CREATE TABLE Location (
+	codeC char(4) UNIQUE REFERENCES Client(codeC),
+    immat char(6) UNIQUE REFERENCES Voiture(immat),
+    annee year PRIMARY KEY,
+    mois tinyint PRIMARY KEY,
+    numLoc varchar(6),
+    km smallint,
+    duree tinyint,
+    villeD varchar(25),
+    villeA varchar(25),
+    dateD date,
+    dateA date
+);
+
+create table Client (
+codeC char(4),
+nom varchar(25),
+prenom varchar(25),
+age int,
+permis varchar(10),
+adresse varchar(50),
+ville varchar(30),
+PRIMARY KEY (codeC)
+);
