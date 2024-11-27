@@ -1,1 +1,17 @@
 
+create database AgenceLocation;
+use AgenceLocation;
+
+create table Voiture (
+immat char(6) primary key,
+modele varchar(25),
+marque varchar(25),
+categorie varchar(25),
+couleur varchar(25),
+places tinyint,
+achatA year,
+compteur int,
+prixJ int,
+codeP char(3)
+);
+
