@@ -1,1 +1,10 @@
-
+create table Client (
+codeC char(4),
+nom varchar(25),
+prenom varchar(25),
+age int,
+permis varchar(10),
+adresse varchar(50),
+ville varchar(30),
+PRIMARY KEY (codeC)
+);
