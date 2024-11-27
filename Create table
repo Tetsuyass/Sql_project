@@ -15,7 +15,7 @@ codeP char(3)
 );
 
 create table Propritaire (
-codeP char(3),
+codeP char(3) primary key,
 pseudo varchar(25),
 email varchar(50),
 ville varchar(25),
