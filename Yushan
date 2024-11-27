@@ -15,3 +15,10 @@ prixJ float,
 codeP char(3)
 );
 
+create table Propritaire (
+codeP char(3),
+pseudo varchar(25),
+email varchar(50),
+ville varchar(25),
+annee year
+);
