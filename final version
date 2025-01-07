@@ -1,0 +1,114 @@
+create database AgenceLocation;
+use AgenceLocation;
+
+create table voiture (
+immat char(6) primary key,
+modele varchar(25),
+marque varchar(25),
+categorie varchar(25),
+couleur varchar(25),
+places tinyint,
+achatA year,
+compteur int,
+prixJ float,
+codeP char(3)
+);
+
+create table proprietaire (
+codeP char(3) primary key,
+pseudo varchar(25),
+email varchar(50),
+ville varchar(25),
+anneeI year
+);
+
+create table client (
+codeC char(4),
+nom varchar(25),
+prenom varchar(25),
+age int,
+permis varchar(10),
+adresse varchar(50),
+ville varchar(30),
+PRIMARY KEY (codeC)
+);
+
+CREATE TABLE location (
+	codeC char(4) REFERENCES Client(codeC),
+    immat char(6) REFERENCES Voiture(immat),
+    annee year,
+    mois tinyint ,
+    numLoc varchar(6),
+    km smallint,
+    duree tinyint,
+    villeD varchar(25),
+    villeA varchar(25),
+    dateD date,
+    dateF date
+);
+
+
+create table access (
+login varchar (50) ,
+password varchar(50),
+clientId char(4) UNIQUE REFERENCES Client(codeC), 
+access_level char(1) DEFAULT 'L'
+);
+
+INSERT INTO access (login, password, clientId, access_level)
+SELECT 
+    CONCAT(client.nom, '.', client.prenom) AS login,  
+    MD5('defaultpassword') AS password,              
+    client.codeC AS clientId,                       
+    'L' AS access_level                              
+FROM client;
+
+-- 1. Donner les pseudos des propriétaires de Paris.
+select pseudo from proprietaire where ville = 'Paris';
+
+-- 2. Donner les immatriculations des voitures cabriolets de 4 places.
+select immat from voiture where places = 4;
+
+-- 3. Combien y a t'il de catégories de voitures différentes dans cette base de données ?
+select count(distinct categorie) as nombre_categorie from voiture;
+
+-- 4. Donner la liste des marques et des modèles ordonnés par marque et modèle.
+select marque, modele from voiture order by marque, modele;
+
+-- 5. Donner la liste des voitures d'au moins 4 places (afficher : marque, modele, immat, places) par ordre de
+-- nombre de places décroissant.
+select marque, modele, immat, places 
+from voiture 
+where places >= 4
+order by places desc;
+
+-- 6. Combien y-a t'il de voitures familiale (catégorie) de moins de 50 000 km, ou utilitaire (catégorie), de
+-- couleur violet ou rouge ?
+select count(*) as nombre_voitures
+from voiture
+where (categorie = 'familiale' and compteur < 50000)
+or (categorie = 'utilitaire' and (couleur = 'rouge' or couleur = 'violet')); 
+
+-- 7. Combien les voitures de Jules ont elles effectuées de location (au total) ?
+select count(*) as total_location
+from location
+join voiture on voiture.immat = location.immat
+where voiture.codeP = 'P12';
+
+-- 8. Afficher la liste des clients ayant loué une voiture sans la ramener à sa ville de départ
+select *
+from client
+join location on location.codeC = client.codeC
+where location.villeD <> location.villeA;
+
+-- 9. Donner la liste (afficher : marque, modèle) des véhicules loués en 04/2015.
+select modele, marque
+from voiture
+join location on location.immat = voiture.immat
+where location.annee = 2015 and location.mois = 4;
+
+-- 10. Donner la liste des véhicules (afficher : immatriculation) ayant réalisés plus de 300 km en location.
+select voiture.immat, voiture.marque, voiture.modele
+from voiture
+join location on location.immat = voiture.immat
+where location.km > 300;
