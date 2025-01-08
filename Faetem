@@ -12,3 +12,11 @@ PRIMARY KEY (codeC)
 SELECT modele, COUNT(numLoc) AS nb_locations FROM VOITURE 
 JOIN LOCATION ON voiture.immat = location.immat
 GROUP BY modele HAVING COUNT(numLoc) >= 3;
+
+SELECT v1.immat, v1.prixJ FROM VOITURE v1
+WHERE v1.prixJ > (SELECT v2.prixJ FROM VOITURE v2 WHERE v2.marque = 'Ferrari' LIMIT 1
+);
+
+SELECT voiture.immat, voiture.prixJ FROM VOITURE 
+WHERE voiture.prixJ > (SELECT voiture.prixJ FROM VOITURE WHERE voiture.marque = 'Ferrari' LIMIT 1
+);
