@@ -1,0 +1,125 @@
+1. Utilisation des Index
+Les index améliorent la vitesse des recherches sur des colonnes spécifiques, particulièrement sur les colonnes utilisées dans les clauses WHERE, JOIN, ou ORDER BY.
+
+Exemple
+Requête sans index :
+
+sql
+Copier le code
+SELECT * FROM voiture WHERE marque = 'Toyota';
+Optimisation :
+Créer un index sur la colonne marque.
+
+sql
+Copier le code
+CREATE INDEX idx_marque ON voiture(marque);
+Cela accélère la recherche sur la colonne marque.
+
+2. Limiter le Nombre de Colonnes Sélectionnées
+Sélectionner uniquement les colonnes nécessaires au lieu d'utiliser SELECT *.
+
+Exemple
+Requête non optimisée :
+
+sql
+Copier le code
+SELECT * FROM voiture WHERE achatA = 2020;
+Optimisation :
+
+sql
+Copier le code
+SELECT immat, modele, prixJ FROM voiture WHERE achatA = 2020;
+Cela réduit la quantité de données renvoyées et améliore les performances.
+
+3. Utilisation de EXISTS au lieu de IN
+EXISTS est généralement plus rapide que IN, surtout pour des sous-requêtes.
+
+Exemple
+Requête non optimisée :
+
+sql
+Copier le code
+SELECT * FROM voiture WHERE codeP IN (SELECT codeP FROM proprietaire WHERE ville = 'Paris');
+Optimisation :
+
+sql
+Copier le code
+SELECT * FROM voiture v WHERE EXISTS (
+    SELECT 1 FROM proprietaire p WHERE p.codeP = v.codeP AND p.ville = 'Paris'
+);
+EXISTS arrête la recherche dès qu’un résultat est trouvé, ce qui est plus performant.
+
+4. Utilisation de JOIN au lieu de Sous-requêtes
+Les JOIN sont souvent plus efficaces que des sous-requêtes imbriquées.
+
+Exemple
+Requête non optimisée :
+
+sql
+Copier le code
+SELECT nom, prenom FROM client WHERE codeC IN (SELECT codeC FROM location WHERE annee = 2022);
+Optimisation :
+
+sql
+Copier le code
+SELECT c.nom, c.prenom
+FROM client c
+JOIN location l ON c.codeC = l.codeC
+WHERE l.annee = 2022;
+Cela permet d'utiliser un plan d’exécution plus rapide.
+
+5. Utiliser les Colonnes Agrégées avec Précaution
+Utilisez des index sur des colonnes fréquemment utilisées dans les GROUP BY ou les ORDER BY.
+
+Exemple
+Requête non optimisée :
+
+sql
+Copier le code
+SELECT couleur, COUNT(*) FROM voiture GROUP BY couleur;
+Optimisation :
+Créer un index sur la colonne couleur :
+
+sql
+Copier le code
+CREATE INDEX idx_couleur ON voiture(couleur);
+
+6. Limiter les Résultats avec LIMIT
+Lors de la pagination, il est préférable d’utiliser LIMIT pour restreindre les résultats.
+
+Exemple
+Requête non optimisée :
+
+sql
+Copier le code
+SELECT * FROM location ORDER BY dateD;
+Optimisation :
+
+sql
+Copier le code
+SELECT * FROM location ORDER BY dateD LIMIT 10;
+Cela récupère uniquement les 10 premiers résultats.
+
+7. Utiliser COUNT(1) au lieu de COUNT(*)
+COUNT(1) est plus efficace que COUNT(*) car il ne vérifie pas la nullité de chaque colonne.
+
+Exemple
+Requête non optimisée :
+
+sql
+Copier le code
+SELECT COUNT(*) FROM voiture WHERE couleur = 'rouge';
+Optimisation :
+
+sql
+Copier le code
+SELECT COUNT(1) FROM voiture WHERE couleur = 'rouge';
+
+8. Analyser avec EXPLAIN
+Utiliser EXPLAIN pour comprendre le plan d'exécution d'une requête et identifier des opportunités d’optimisation.
+
+Exemple
+sql
+Copier le code
+EXPLAIN SELECT * FROM voiture WHERE achatA = 2020;
+Cela affiche les index utilisés, le type de jointure, et la cardinalité.
