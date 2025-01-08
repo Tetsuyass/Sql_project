@@ -8,3 +8,7 @@ adresse varchar(50),
 ville varchar(30),
 PRIMARY KEY (codeC)
 );
+
+SELECT modele, COUNT(numLoc) AS nb_locations FROM VOITURE 
+JOIN LOCATION ON voiture.immat = location.immat
+GROUP BY modele HAVING COUNT(numLoc) >= 3;
