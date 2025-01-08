@@ -11,3 +11,104 @@ CREATE TABLE Location (
     dateD date,
     dateA date
 );
+
+//SQL PYTHON :
+
+import mysql.connector
+
+# Connexion à la base de données
+def connect_to_db():
+    return mysql.connector.connect(
+        host="localhost",
+        user="votre_utilisateur",     #utilisateur non-root avec accès.
+        password="votre_mot_de_passe",
+        database="AgenceLocation"
+    )
+
+# Création d'une nouvelle voiture
+def create_car(conn, voiture_data):
+    query = ("INSERT INTO VOITURE (immat, modele, marque, categorie, couleur, places, achatA, compteur, prixJ, codeP) "
+             "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+    with conn.cursor() as cursor:
+        cursor.execute(query, voiture_data)
+        conn.commit()
+
+# Lecture des voitures
+def read_cars(conn):
+    query = "SELECT * FROM VOITURE"
+    with conn.cursor() as cursor:
+        cursor.execute(query)
+        for car in cursor.fetchall():
+            print(car)
+
+# Mise à jour du kilométrage
+def update_car_km(conn, immat, new_km):
+    query = "UPDATE VOITURE SET compteur = %s WHERE immat = %s"
+    with conn.cursor() as cursor:
+        cursor.execute(query, (new_km, immat))
+        conn.commit()
+
+# Suppression d'une voiture
+def delete_car(conn, immat):
+    query = "DELETE FROM VOITURE WHERE immat = %s"
+    with conn.cursor() as cursor:
+        cursor.execute(query, (immat,))
+        conn.commit()
+
+# Exemple d'utilisation
+conn = connect_to_db()
+create_car(conn, ('AB123CD', 'ModelX', 'Tesla', 'SUV', 'Red', 5, 2021, 0, 100, 'P01'))
+read_cars(conn)
+update_car_km(conn, 'AB123CD', 1500)
+delete_car(conn, 'AB123CD')
+conn.close()
+
+
+//PARTIE 5 : 
+
+#J'avais pas la base donc j'ai mis des trucs à remplir
+
+
+import plotly.express as px
+import pandas as pd
+
+# Exemple 1 : Histogramme des voitures par catégorie
+df = pd.read_sql("SELECT categorie, COUNT(*) as count FROM VOITURE GROUP BY categorie", conn)
+fig = px.bar(df, x='categorie', y='count', title='Nombre de voitures par catégorie')
+fig.show()
+
+# Exemple 2 : Répartition des couleurs des voitures
+df = pd.read_sql("SELECT couleur, COUNT(*) as count FROM VOITURE GROUP BY couleur", conn)
+fig = px.pie(df, names='couleur', values='count', title='Répartition des couleurs des voitures')
+fig.show()
+
+# Exemple 3 : Kilométrage moyen par marque
+df = pd.read_sql("SELECT marque, AVG(compteur) as avg_km FROM VOITURE GROUP BY marque", conn)
+fig = px.bar(df, x='marque', y='avg_km', title='Kilométrage moyen par marque')
+fig.show()
+
+
+
+// PARTIE 6 : 
+
+
+#Indexation
+
+CREATE INDEX idx_marque ON VOITURE(marque);
+CREATE INDEX idx_km ON VOITURE(compteur);
+
+
+#Utilisation des vues
+
+CREATE VIEW LocationKmParProprietaire AS
+SELECT p.codeP, SUM(l.km) AS total_km
+FROM PROPRIETAIRE p
+JOIN VOITURE v ON p.codeP = v.codeP
+JOIN LOCATION l ON l.immat = v.immat
+GROUP BY p.codeP;
+
+#Requêtes préparées 
+
+query = "SELECT COUNT(*) FROM LOCATION WHERE km > %s"
+cursor.execute(query, (300,))
+
