@@ -48,3 +48,22 @@ SELECT voiture.marque, AVG(locations_count) AS moyenne_locations
 FROM (SELECT voiture.marque, COUNT(location.numLoc) AS locations_count FROM VOITURE 
 JOIN LOCATION ON voiture.immat = location.immat GROUP BY voiture.marque) AS location_counts GROUP BY marque;
 
+-- Requêtes supplémentaires 
+-- 21. Obtenir les locations effectuées par un client spécifique. 
+SELECT location.numLoc, voiture.modele, location.km, location.duree, location.dateD, location.dateF FROM LOCATION 
+JOIN VOITURE ON location.immat = voiture.immat WHERE location.CodeC = 123;
+
+-- 22. Top 5 des villes avec le plus de départs de locations.
+SELECT villeD, COUNT(*) AS nb_departs FROM LOCATION
+GROUP BY villeD ORDER BY nb_departs DESC LIMIT 5;
+
+-- 23. Répartition des clients entre 20 et 30 ans et entre 40 et 50 ans
+-- SELECT COUNT(*) AS nb_clients FROM CLIENT WHERE age BETWEEN 20 AND 30;
+
+-- 24. Locations par année
+SELECT annee, COUNT(*) AS nb_locations FROM LOCATION GROUP BY annee ORDER BY annee;
+
+-- 25. Durée moyenne des locations par client 
+SELECT client.codeC, C.nom, C.prenom, AVG(location.duree) AS duree_moyenne FROM CLIENT 
+JOIN LOCATION ON client.codeC = location.CodeC
+GROUP BY client.codeC, client.nom, client.prenom ORDER BY duree_moyenne DESC;
