@@ -1,22 +1,50 @@
-create table Client (
-codeC char(4),
-nom varchar(25),
-prenom varchar(25),
-age int,
-permis varchar(10),
-adresse varchar(50),
-ville varchar(30),
-PRIMARY KEY (codeC)
-);
-
+-- 11. Liste des modèles de voitures ayant été loués au moins 3 fois (avec nombre de locations) ?
 SELECT modele, COUNT(numLoc) AS nb_locations FROM VOITURE 
 JOIN LOCATION ON voiture.immat = location.immat
 GROUP BY modele HAVING COUNT(numLoc) >= 3;
 
-SELECT v1.immat, v1.prixJ FROM VOITURE v1
-WHERE v1.prixJ > (SELECT v2.prixJ FROM VOITURE v2 WHERE v2.marque = 'Ferrari' LIMIT 1
+-- 12. Quel est le total des km de location effectués pour le propriétaire P75 ?
+SELECT SUM(km) AS total_km FROM LOCATION
+JOIN VOITURE ON location.immat = voiture.immat
+WHERE voiture.codeP = 75;
+
+-- 13. Quel est le total des km de location effectués pour le propriétaire P75 (voiture par voiture)?
+SELECT voiture.immat, SUM(km) AS total_km FROM LOCATION
+JOIN VOITURE ON location.immat = voiture.immat
+WHERE voiture.codeP = 75 GROUP BY voiture.immat;
+
+-- 14. Quelle voiture a plus de km au compteur que toutes les Peugeot ?
+SELECT voiture.immat FROM VOITURE 
+WHERE voiture.compteur > ALL (SELECT voiture.compteur FROM VOITURE WHERE voiture.marque = 'Peugeot'
 );
 
+-- 15. Quelle/s voiture/s a/ont un prix de journée supérieur à une Ferrari ?
 SELECT voiture.immat, voiture.prixJ FROM VOITURE 
 WHERE voiture.prixJ > (SELECT voiture.prixJ FROM VOITURE WHERE voiture.marque = 'Ferrari' LIMIT 1
 );
+
+-- 16. Liste des voitures ayant un km compteur supérieur à la moyenne des km compteur de leur modèle ?
+SELECT voiture.immat, voiture.modele, voiture.compteur FROM VOITURE
+WHERE voiture.compteur > (SELECT AVG(voiture.compteur) FROM VOITURE WHERE voiture.modele = voiture.modele
+);
+
+-- 17. Les kilomètres effectués en location par Alain Delon par voiture. Afficher (immat et le nombre de Kms total).
+SELECT location.immat, SUM(km) AS total_km FROM LOCATION 
+JOIN CLIENT ON location.CodeC = client.codeC
+WHERE client.nom = 'Delon' AND client.prenom = 'Alain' GROUP BY location.immat;
+
+-- 18. Quel client a loué le plus de véhicules différents ?
+SELECT location.CodeC, COUNT(DISTINCT location.immat) AS nb_voitures FROM LOCATION
+GROUP BY location.CodeC ORDER BY nb_voitures DESC
+LIMIT 1;
+
+-- 19. Pour chaque n° de permis, afficher le nombre de fois où il est utilisé.
+SELECT client.permis, COUNT(*) AS nb_utilisations FROM CLIENT 
+JOIN LOCATION ON client.codeC = location.CodeC
+GROUP BY client.permis;
+
+-- 20. Quel est le nombre moyen de locations par marque ?
+SELECT voiture.marque, AVG(locations_count) AS moyenne_locations
+FROM (SELECT voiture.marque, COUNT(location.numLoc) AS locations_count FROM VOITURE 
+JOIN LOCATION ON voiture.immat = location.immat GROUP BY voiture.marque) AS location_counts GROUP BY marque;
+
