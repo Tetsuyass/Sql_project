@@ -57,8 +57,8 @@ JOIN VOITURE ON location.immat = voiture.immat WHERE location.CodeC = 123;
 SELECT villeD, COUNT(*) AS nb_departs FROM LOCATION
 GROUP BY villeD ORDER BY nb_departs DESC LIMIT 5;
 
--- 23. Répartition des clients entre 20 et 30 ans et entre 40 et 50 ans
--- SELECT COUNT(*) AS nb_clients FROM CLIENT WHERE age BETWEEN 20 AND 30;
+-- 23. Nombre de clients entre 20 et 30 ans 
+SELECT COUNT(*) AS nb_clients FROM CLIENT WHERE age BETWEEN 20 AND 30;
 
 -- 24. Locations par année
 SELECT annee, COUNT(*) AS nb_locations FROM LOCATION GROUP BY annee ORDER BY annee;
