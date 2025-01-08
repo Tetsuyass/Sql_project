@@ -1,18 +1,18 @@
 CREATE DATABASE AgenceLocation;
 USE AgenceLocation;
 
-create table access (
+CREATE TABLE access (
 login varchar (50) ,
 password varchar(50),
 clientId char(4) UNIQUE REFERENCES Client(codeC), 
 access_level char(1) DEFAULT 'L'
 );
-INSERT INTO access (login, password, clientId, access_level)
+INSERT INTO access (login, password, codec, access_level)
 SELECT 
-    CONCAT(client.nom, '.', client.prenom) AS login,  
-    MD5('defaultpassword') AS password,              
-    client.codeC AS clientId,                       
-    'L' AS access_level                              
+    concat(codec, '.', IFNULL(prenom, '')) AS login, 
+    md5(concat(nom, IFNULL(prenom, ''), codec)) AS password, 
+    codec, 
+    'L'
 FROM client;
 
 CREATE TABLE PROPRIETAIRE (
